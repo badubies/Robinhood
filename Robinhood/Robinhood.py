@@ -724,7 +724,31 @@ class Robinhood:
 
         return req.json()['results'][0]
 
+    
+    def get_historical_equity(self, interval='5minute', span='day', bounds='trading'):
+        """Fetch historical data for equity
 
+            Note: valid interval/span configs
+                interval = 5minute | 10minute + span = day, week
+                interval = day + span = year
+                interval = week
+                TODO: NEEDS TESTS
+
+            Args:
+                stock (str): stock ticker
+                interval (str): resolution of data
+                span (str): length of data
+                bounds (:enum:`Bounds`, optional): 'extended', 'regular' or 'trading' hours
+
+            Returns:
+                (:obj:`dict`) values returned from `historicals` endpoint
+        """
+        account_num = self.get_account()['portfolio'].split('/')[-3]
+        url = endpoints.portfolios() + 'historicals/'+account_num+'/?account='+account_num+'&bounds='+bounds+'&interval='+interval+'&span='+span
+        res = self.session.get(url, timeout=15)
+        return res.json()
+    
+    
     def adjusted_equity_previous_close(self):
         """Wrapper for portfolios
 
